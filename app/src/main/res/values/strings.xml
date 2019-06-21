@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">Kotlin Crud</string>
+    <string name="refresh">Refresh</string>
+</resources>
