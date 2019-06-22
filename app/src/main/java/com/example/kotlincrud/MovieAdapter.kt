@@ -39,8 +39,8 @@ class MovieAdapter(val context: Context) : RecyclerView.Adapter<MovieAdapter.Mov
 
     override fun onBindViewHolder(holder: MovieViewHolder, position: Int) {
         holder.view.name.text = movies[position].name
-        holder.view.btnDelete.setOnClickListener { showDeleteDialog(holder, movies[position]) }
-        holder.view.btnEdit.setOnClickListener { showUpdateDialog(holder, movies[position]) }
+//        holder.view.btnDelete.setOnClickListener { showDeleteDialog(holder, movies[position]) }
+//        holder.view.btnEdit.setOnClickListener { showUpdateDialog(holder, movies[position]) }
     }
 
     override fun getItemCount() = movies.size

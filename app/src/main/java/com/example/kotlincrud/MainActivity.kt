@@ -13,18 +13,16 @@ import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {
 
-    lateinit var adapter:MovieAdapter
+    lateinit var adapter: CurrencyAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        adapter = MovieAdapter(this.baseContext)
+        adapter = CurrencyAdapter(this.baseContext)
 
         rv_item_list.layoutManager = LinearLayoutManager(this)
         rv_item_list.adapter = adapter
-
-        fab.setOnClickListener{ showNewDialog() }
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -35,35 +33,12 @@ class MainActivity : AppCompatActivity() {
 
     override fun onOptionsItemSelected(item: MenuItem) = when (item.itemId) {
         R.id.refresh -> {
-            adapter.refreshMovies()
+            adapter.refreshCurrencyRate()
             Toast.makeText(this.baseContext, "Refreshed", Toast.LENGTH_LONG).show()
             true
         }
         else -> {
             super.onOptionsItemSelected(item)
         }
-    }
-
-    fun showNewDialog() {
-        val dialogBuilder = AlertDialog.Builder(this)
-
-        val input = EditText(this@MainActivity)
-        val lp = LinearLayout.LayoutParams(
-            LinearLayout.LayoutParams.MATCH_PARENT,
-            LinearLayout.LayoutParams.MATCH_PARENT)
-        input.layoutParams = lp
-
-        dialogBuilder.setView(input)
-
-        dialogBuilder.setTitle("New Movie")
-        dialogBuilder.setMessage("Enter Name Below")
-        dialogBuilder.setPositiveButton("Save", { dialog, whichButton ->
-            adapter.addMovie(Movie(0,input.text.toString()))
-        })
-        dialogBuilder.setNegativeButton("Cancel", { dialog, whichButton ->
-            //pass
-        })
-        val b = dialogBuilder.create()
-        b.show()
     }
 }
