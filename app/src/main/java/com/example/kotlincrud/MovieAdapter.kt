@@ -14,17 +14,22 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.list_item.view.*
 
-class MovieAdapter(val context: Context) :  RecyclerView.Adapter<MovieAdapter.MovieViewHolder>() {
+class MovieAdapter(val context: Context) : RecyclerView.Adapter<MovieAdapter.MovieViewHolder>() {
 
     val client by lazy { MovieApiClient.create() }
+    val client2 by lazy { CurrencyApiClient.create() }
     var movies: ArrayList<Movie> = ArrayList()
 
-    init { refreshMovies() }
+    init {
+        refreshMovies()
+    }
 
     class MovieViewHolder(val view: View) : RecyclerView.ViewHolder(view)
 
-    override fun onCreateViewHolder(parent: ViewGroup,
-                                    viewType: Int): MovieAdapter.MovieViewHolder {
+    override fun onCreateViewHolder(
+        parent: ViewGroup,
+        viewType: Int
+    ): MovieAdapter.MovieViewHolder {
 
         val view = LayoutInflater.from(parent.context)
             .inflate(R.layout.list_item, parent, false)
@@ -41,6 +46,15 @@ class MovieAdapter(val context: Context) :  RecyclerView.Adapter<MovieAdapter.Mo
     override fun getItemCount() = movies.size
 
     fun refreshMovies() {
+        client2.getCurrencyRate("21/06/2019").subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
+            .subscribe({ result ->
+                Log.d("CURR_RES", result.toString())
+            }, { error ->
+                Toast.makeText(context, "Refresh error: ${error.message}", Toast.LENGTH_LONG).show()
+                Log.e("ERRORS", error.message)
+            })
+
+
         client.getMovies()
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
@@ -48,7 +62,7 @@ class MovieAdapter(val context: Context) :  RecyclerView.Adapter<MovieAdapter.Mo
                 movies.clear()
                 movies.addAll(result.list.movies)
                 notifyDataSetChanged()
-            },{ error ->
+            }, { error ->
                 Toast.makeText(context, "Refresh error: ${error.message}", Toast.LENGTH_LONG).show()
                 Log.e("ERRORS", error.message)
             })
@@ -70,6 +84,8 @@ class MovieAdapter(val context: Context) :  RecyclerView.Adapter<MovieAdapter.Mo
             .subscribe({ refreshMovies() }, { throwable ->
                 Toast.makeText(context, "Add error: ${throwable.message}", Toast.LENGTH_LONG).show()
             })
+
+
     }
 
     fun deleteMovie(movie: Movie) {
@@ -87,7 +103,8 @@ class MovieAdapter(val context: Context) :  RecyclerView.Adapter<MovieAdapter.Mo
         val input = EditText(holder.view.context)
         val lp = LinearLayout.LayoutParams(
             LinearLayout.LayoutParams.MATCH_PARENT,
-            LinearLayout.LayoutParams.MATCH_PARENT)
+            LinearLayout.LayoutParams.MATCH_PARENT
+        )
         input.layoutParams = lp
         input.setText(movie.name)
 
@@ -95,7 +112,7 @@ class MovieAdapter(val context: Context) :  RecyclerView.Adapter<MovieAdapter.Mo
 
         dialogBuilder.setTitle("Update Movie")
         dialogBuilder.setPositiveButton("Update", { dialog, whichButton ->
-            updateMovie(Movie(movie.id,input.text.toString()))
+            updateMovie(Movie(movie.id, input.text.toString()))
         })
         dialogBuilder.setNegativeButton("Cancel", { dialog, whichButton ->
             dialog.cancel()
