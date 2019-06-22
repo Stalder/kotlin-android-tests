@@ -1,5 +1,6 @@
 package com.example.kotlincrud
 
+import android.content.Context
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.support.v7.app.AlertDialog
@@ -18,6 +19,9 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        var prefs = this.getSharedPreferences("com.example.kotlincrud", Context.MODE_PRIVATE)
+        HistoryStorage.instance.init(prefs)
 
         adapter = CurrencyAdapter(this.baseContext)
 
